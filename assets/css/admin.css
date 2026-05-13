@@ -1,0 +1,224 @@
+/**
+ * ALMC VeriFactu - Admin Styles
+ *
+ * @package ALMC_VeriFactu
+ */
+
+/* ── Settings Page ── */
+
+.almc-vf-settings .almc-vf-connection-status {
+    margin: 10px 0 20px;
+}
+
+.almc-vf-settings .form-table th {
+    width: 200px;
+}
+
+.almc-vf-test-result {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+}
+
+.almc-vf-test-result.success {
+    color: #0a6b2e;
+    background: #d4edda;
+}
+
+.almc-vf-test-result.error {
+    color: #842029;
+    background: #f8d7da;
+}
+
+/* ── Status Badges ── */
+
+.almc-vf-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.almc-vf-badge-draft {
+    color: #6c757d;
+    background: #e9ecef;
+}
+
+.almc-vf-badge-queued {
+    color: #856404;
+    background: #fff3cd;
+}
+
+.almc-vf-badge-submitted {
+    color: #0c5460;
+    background: #d1ecf1;
+}
+
+.almc-vf-badge-accepted {
+    color: #155724;
+    background: #d4edda;
+}
+
+.almc-vf-badge-rejected {
+    color: #721c24;
+    background: #f8d7da;
+}
+
+.almc-vf-badge-cancelled {
+    color: #383d41;
+    background: #d6d8db;
+}
+
+.almc-vf-badge-info {
+    color: #0c5460;
+    background: #d1ecf1;
+}
+
+.almc-vf-badge-warning {
+    color: #856404;
+    background: #fff3cd;
+}
+
+/* ── Order Metabox ── */
+
+.almc-vf-metabox {
+    padding: 4px 0;
+}
+
+.almc-vf-status-row,
+.almc-vf-info-row,
+.almc-vf-error-row {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.almc-vf-status-row strong,
+.almc-vf-info-row strong,
+.almc-vf-error-row strong {
+    display: inline-block;
+    min-width: 60px;
+    color: #1d2327;
+}
+
+.almc-vf-uuid {
+    font-size: 11px;
+    word-break: break-all;
+    padding: 2px 4px;
+    background: #f6f7f7;
+    border-radius: 2px;
+}
+
+.almc-vf-error-text {
+    color: #cc1818;
+    font-size: 12px;
+}
+
+.almc-vf-notice-warning {
+    padding: 8px 12px;
+    background: #fff3cd;
+    border-left: 4px solid #dba617;
+    color: #856404;
+    margin: 0 0 10px;
+}
+
+.almc-vf-notice-warning a {
+    color: #533f03;
+    font-weight: 600;
+}
+
+/* ── AEAT Response ── */
+
+.almc-vf-aeat-response {
+    margin: 8px 0;
+}
+
+.almc-vf-toggle-response {
+    font-size: 12px;
+    text-decoration: none;
+    color: #2271b1;
+}
+
+.almc-vf-response-data {
+    margin-top: 6px;
+    padding: 8px;
+    background: #f6f7f7;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 11px;
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* ── Action Buttons ── */
+
+.almc-vf-actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.almc-vf-actions .button {
+    font-size: 12px;
+}
+
+/* ── AJAX Messages ── */
+
+.almc-vf-ajax-message {
+    margin-top: 10px;
+    padding: 6px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.almc-vf-ajax-message.success {
+    color: #0a6b2e;
+    background: #d4edda;
+    border: 1px solid #badbcc;
+}
+
+.almc-vf-ajax-message.error {
+    color: #842029;
+    background: #f8d7da;
+    border: 1px solid #f5c2c7;
+}
+
+/* ── Copy Button ── */
+
+.almc-vf-copy-btn {
+    font-size: 11px !important;
+    padding: 0 6px !important;
+    min-height: 24px !important;
+    line-height: 22px !important;
+    vertical-align: middle;
+}
+
+/* ── Spinner ── */
+
+.almc-vf-spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #ccc;
+    border-top-color: #2271b1;
+    border-radius: 50%;
+    animation: almc-vf-spin 0.6s linear infinite;
+    vertical-align: middle;
+    margin-left: 6px;
+}
+
+@keyframes almc-vf-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
