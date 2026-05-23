@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- this is a partial included from render_settings_page(); variables are include-scoped locals, not real globals. Plugin Check cannot distinguish so we silence the rule for the whole file.
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- this is a partial included from render_settings_page(); variables here are include-scoped locals, not real globals.
 
 $pct = $total_count > 0 ? round( ( $completed_count / $total_count ) * 100 ) : 0;
 $all_done = $completed_count === $total_count;
@@ -27,10 +27,10 @@ $all_done = $completed_count === $total_count;
         <h2 class="almc-vf-onboarding__title">
             <?php if ( $all_done ) : ?>
                 <span class="dashicons dashicons-yes-alt" aria-hidden="true"></span>
-                <?php esc_html_e( 'Configuración completa', 'almc-verifactu' ); ?>
+                <?php esc_html_e( 'Configuración completa', 'almc-electronic-invoicing-verifactu' ); ?>
             <?php else : ?>
                 <span class="dashicons dashicons-flag" aria-hidden="true"></span>
-                <?php esc_html_e( 'Cómo empezar', 'almc-verifactu' ); ?>
+                <?php esc_html_e( 'Cómo empezar', 'almc-electronic-invoicing-verifactu' ); ?>
             <?php endif; ?>
         </h2>
         <div class="almc-vf-onboarding__progress">
@@ -38,7 +38,7 @@ $all_done = $completed_count === $total_count;
                 <?php
                 printf(
                     /* translators: %1$d completados, %2$d total */
-                    esc_html__( '%1$d de %2$d pasos', 'almc-verifactu' ),
+                    esc_html__( '%1$d de %2$d pasos', 'almc-electronic-invoicing-verifactu' ),
                     (int) $completed_count,
                     (int) $total_count
                 );
@@ -84,7 +84,7 @@ $all_done = $completed_count === $total_count;
 
     <?php if ( $all_done ) : ?>
         <p class="almc-vf-onboarding__footer">
-            <?php esc_html_e( 'Todo listo. Cada vez que un pedido cambie al estado configurado, su factura se enviará automáticamente a la AEAT.', 'almc-verifactu' ); ?>
+            <?php esc_html_e( 'Todo listo. Cada vez que un pedido cambie al estado configurado, su factura se enviará automáticamente a la AEAT.', 'almc-electronic-invoicing-verifactu' ); ?>
         </p>
     <?php endif; ?>
 </div>

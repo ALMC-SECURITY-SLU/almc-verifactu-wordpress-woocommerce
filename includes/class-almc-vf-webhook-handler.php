@@ -423,7 +423,7 @@ class ALMC_VF_Webhook_Handler {
         // Add order note.
         $note = sprintf(
             /* translators: 1: event type, 2: old status, 3: new status */
-            __( 'VeriFactu Webhook: %1$s. Estado: "%2$s" -> "%3$s".', 'almc-verifactu' ),
+            __( 'VeriFactu Webhook: %1$s. Estado: "%2$s" -> "%3$s".', 'almc-electronic-invoicing-verifactu' ),
             ! empty( $event_type ) ? $event_type : 'status_update',
             $old_status,
             $status
@@ -454,9 +454,9 @@ class ALMC_VF_Webhook_Handler {
             && Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled()
         ) {
             $orders = wc_get_orders( array(
-                // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- single-row lookup keyed on our own plugin-private meta (UUID). The "slow query" warning targets bulk scans with arbitrary meta — not applicable here.
+                // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- single-row lookup keyed on our own plugin-private meta (UUID). Not a bulk scan.
                 'meta_key'   => '_almc_vf_invoice_uuid',
-                // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- value is a UUID that uniquely identifies the row; lookup is bounded to limit=1.
+                // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- value is a UUID; lookup is bounded to limit=1.
                 'meta_value' => $uuid,
                 'limit'      => 1,
             ) );
