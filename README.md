@@ -2,9 +2,9 @@
 
 > Sends your WooCommerce invoices to the Spanish Tax Agency (AEAT) under the VeriFactu e-invoicing specification (RD 1007/2023). Automatic, signed, sandbox-tested. Not affiliated with AEAT.
 
-[![Plugin on WordPress.org](https://img.shields.io/wordpress/plugin/v/almc-verifactu)](https://wordpress.org/plugins/almc-verifactu/)
-[![Active installs](https://img.shields.io/wordpress/plugin/installs/almc-verifactu)](https://wordpress.org/plugins/almc-verifactu/)
-[![Rating](https://img.shields.io/wordpress/plugin/rating/almc-verifactu)](https://wordpress.org/plugins/almc-verifactu/)
+[![Plugin on WordPress.org](https://img.shields.io/wordpress/plugin/v/almc-electronic-invoicing-verifactu)](https://wordpress.org/plugins/almc-electronic-invoicing-verifactu/)
+[![Active installs](https://img.shields.io/wordpress/plugin/installs/almc-electronic-invoicing-verifactu)](https://wordpress.org/plugins/almc-electronic-invoicing-verifactu/)
+[![Rating](https://img.shields.io/wordpress/plugin/rating/almc-electronic-invoicing-verifactu)](https://wordpress.org/plugins/almc-electronic-invoicing-verifactu/)
 [![License: GPL v2+](https://img.shields.io/badge/License-GPL%20v2%2B-blue.svg)](https://www.gnu.org/licenses/gpl-2.0)
 
 By [**ALMC Security S.L.U.**](https://almc.es) — Spanish security & compliance engineering.
@@ -52,7 +52,7 @@ Short version:
 
 ```bash
 # Via WP-CLI
-wp plugin install https://almc.es/downloads/almc-verifactu-1.0.1.zip --activate
+wp plugin install https://almc.es/downloads/almc-electronic-invoicing-verifactu-1.0.1.zip --activate
 ```
 
 Or upload the ZIP from `Plugins > Add New > Upload Plugin`.
