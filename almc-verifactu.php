@@ -7,7 +7,7 @@
  * Author: ALMC Security S.L.U.
  * Author URI: https://almc.es
  * License: GPL-2.0-or-later
- * Text Domain: almc-electronic-invoicing-verifactu
+ * Text Domain: almc-verifactu
  * Domain Path: /languages
  * Requires at least: 5.8
  * Requires PHP: 7.4
@@ -58,7 +58,7 @@ function almc_vf_init() {
  * Admin notice when WooCommerce is not active.
  */
 function almc_vf_woocommerce_missing_notice() {
-    echo '<div class="error"><p><strong>' . esc_html__( 'ALMC Electronic Invoicing for VeriFactu', 'almc-electronic-invoicing-verifactu' ) . '</strong> ' . esc_html__( 'requiere WooCommerce activo.', 'almc-electronic-invoicing-verifactu' ) . '</p></div>';
+    echo '<div class="error"><p><strong>' . esc_html__( 'ALMC Electronic Invoicing for VeriFactu', 'almc-verifactu' ) . '</strong> ' . esc_html__( 'requiere WooCommerce activo.', 'almc-verifactu' ) . '</p></div>';
 }
 
 /**
@@ -95,7 +95,7 @@ function almc_vf_deactivate() {
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'almc_vf_plugin_action_links' );
 
 function almc_vf_plugin_action_links( $links ) {
-    $settings_link = '<a href="' . admin_url( 'admin.php?page=almc-electronic-invoicing-verifactu' ) . '">' . __( 'Ajustes', 'almc-electronic-invoicing-verifactu' ) . '</a>';
+    $settings_link = '<a href="' . admin_url( 'admin.php?page=almc-verifactu' ) . '">' . __( 'Ajustes', 'almc-verifactu' ) . '</a>';
     array_unshift( $links, $settings_link );
     return $links;
 }

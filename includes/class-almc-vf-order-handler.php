@@ -65,10 +65,10 @@ class ALMC_VF_Order_Handler {
         if ( ! $api->is_configured() ) {
             $error = new WP_Error(
                 'almc_vf_not_configured',
-                __( 'VeriFactu: Plugin no configurado.', 'almc-electronic-invoicing-verifactu' )
+                __( 'VeriFactu: Plugin no configurado.', 'almc-verifactu' )
             );
             $order->add_order_note(
-                __( 'VeriFactu: No se pudo enviar la factura. El plugin no esta configurado.', 'almc-electronic-invoicing-verifactu' )
+                __( 'VeriFactu: No se pudo enviar la factura. El plugin no esta configurado.', 'almc-verifactu' )
             );
             return $error;
         }
@@ -79,7 +79,7 @@ class ALMC_VF_Order_Handler {
             $order->add_order_note(
                 sprintf(
                     /* translators: %s: error message */
-                    __( 'VeriFactu: Validacion fallida - %s', 'almc-electronic-invoicing-verifactu' ),
+                    __( 'VeriFactu: Validacion fallida - %s', 'almc-verifactu' ),
                     $validation->get_error_message()
                 )
             );
@@ -96,7 +96,7 @@ class ALMC_VF_Order_Handler {
             $order->add_order_note(
                 sprintf(
                     /* translators: %s: error message */
-                    __( 'VeriFactu: Error al crear factura - %s', 'almc-electronic-invoicing-verifactu' ),
+                    __( 'VeriFactu: Error al crear factura - %s', 'almc-verifactu' ),
                     $result->get_error_message()
                 )
             );
@@ -128,7 +128,7 @@ class ALMC_VF_Order_Handler {
         // Add order note.
         $note = sprintf(
             /* translators: 1: invoice number, 2: UUID, 3: status */
-            __( 'VeriFactu: Factura creada - %1$s (UUID: %2$s). Estado: %3$s', 'almc-electronic-invoicing-verifactu' ),
+            __( 'VeriFactu: Factura creada - %1$s (UUID: %2$s). Estado: %3$s', 'almc-verifactu' ),
             isset( $data['invoice_number'] ) ? $data['invoice_number'] : 'N/A',
             $invoice_uuid,
             $status
@@ -137,7 +137,7 @@ class ALMC_VF_Order_Handler {
         if ( ! empty( $job_id ) ) {
             $note .= sprintf(
                 /* translators: %s: job ID */
-                __( '. Job de envio: %s', 'almc-electronic-invoicing-verifactu' ),
+                __( '. Job de envio: %s', 'almc-verifactu' ),
                 $job_id
             );
         }
@@ -156,7 +156,7 @@ class ALMC_VF_Order_Handler {
     public static function manual_submit( $order_id ) {
         $order = wc_get_order( $order_id );
         if ( ! $order ) {
-            return new WP_Error( 'almc_vf_order_not_found', __( 'Pedido no encontrado.', 'almc-electronic-invoicing-verifactu' ) );
+            return new WP_Error( 'almc_vf_order_not_found', __( 'Pedido no encontrado.', 'almc-verifactu' ) );
         }
 
         // If already has UUID but status is draft, submit it.
@@ -170,7 +170,7 @@ class ALMC_VF_Order_Handler {
                 'almc_vf_already_submitted',
                 sprintf(
                     /* translators: %s: current status */
-                    __( 'Esta factura ya fue enviada. Estado actual: %s', 'almc-electronic-invoicing-verifactu' ),
+                    __( 'Esta factura ya fue enviada. Estado actual: %s', 'almc-verifactu' ),
                     $status
                 )
             );
@@ -194,7 +194,7 @@ class ALMC_VF_Order_Handler {
             $order->add_order_note(
                 sprintf(
                     /* translators: %s: error message */
-                    __( 'VeriFactu: Error al enviar factura existente - %s', 'almc-electronic-invoicing-verifactu' ),
+                    __( 'VeriFactu: Error al enviar factura existente - %s', 'almc-verifactu' ),
                     $result->get_error_message()
                 )
             );
@@ -219,7 +219,7 @@ class ALMC_VF_Order_Handler {
         $order->add_order_note(
             sprintf(
                 /* translators: %s: status */
-                __( 'VeriFactu: Factura enviada a la AEAT. Estado: %s', 'almc-electronic-invoicing-verifactu' ),
+                __( 'VeriFactu: Factura enviada a la AEAT. Estado: %s', 'almc-verifactu' ),
                 $status
             )
         );
@@ -236,12 +236,12 @@ class ALMC_VF_Order_Handler {
     public static function refresh_status( $order_id ) {
         $order = wc_get_order( $order_id );
         if ( ! $order ) {
-            return new WP_Error( 'almc_vf_order_not_found', __( 'Pedido no encontrado.', 'almc-electronic-invoicing-verifactu' ) );
+            return new WP_Error( 'almc_vf_order_not_found', __( 'Pedido no encontrado.', 'almc-verifactu' ) );
         }
 
         $uuid = $order->get_meta( '_almc_vf_invoice_uuid' );
         if ( empty( $uuid ) ) {
-            return new WP_Error( 'almc_vf_no_invoice', __( 'Este pedido no tiene factura en VeriFactu.', 'almc-electronic-invoicing-verifactu' ) );
+            return new WP_Error( 'almc_vf_no_invoice', __( 'Este pedido no tiene factura en VeriFactu.', 'almc-verifactu' ) );
         }
 
         $api    = ALMC_VF_Api_Client::instance();
@@ -268,7 +268,7 @@ class ALMC_VF_Order_Handler {
             $order->add_order_note(
                 sprintf(
                     /* translators: 1: old status, 2: new status */
-                    __( 'VeriFactu: Estado actualizado de "%1$s" a "%2$s".', 'almc-electronic-invoicing-verifactu' ),
+                    __( 'VeriFactu: Estado actualizado de "%1$s" a "%2$s".', 'almc-verifactu' ),
                     $old_status,
                     $new_status
                 )

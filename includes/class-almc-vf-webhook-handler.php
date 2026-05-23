@@ -423,7 +423,7 @@ class ALMC_VF_Webhook_Handler {
         // Add order note.
         $note = sprintf(
             /* translators: 1: event type, 2: old status, 3: new status */
-            __( 'VeriFactu Webhook: %1$s. Estado: "%2$s" -> "%3$s".', 'almc-electronic-invoicing-verifactu' ),
+            __( 'VeriFactu Webhook: %1$s. Estado: "%2$s" -> "%3$s".', 'almc-verifactu' ),
             ! empty( $event_type ) ? $event_type : 'status_update',
             $old_status,
             $status
@@ -454,7 +454,9 @@ class ALMC_VF_Webhook_Handler {
             && Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled()
         ) {
             $orders = wc_get_orders( array(
+                // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- single-row lookup keyed on our own plugin-private meta (UUID). The "slow query" warning targets bulk scans with arbitrary meta — not applicable here.
                 'meta_key'   => '_almc_vf_invoice_uuid',
+                // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- value is a UUID that uniquely identifies the row; lookup is bounded to limit=1.
                 'meta_value' => $uuid,
                 'limit'      => 1,
             ) );
@@ -462,8 +464,9 @@ class ALMC_VF_Webhook_Handler {
             return ! empty( $orders ) ? $orders[0] : false;
         }
 
-        // Legacy meta query.
+        // Legacy meta query (non-HPOS shops).
         global $wpdb;
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- WC meta API does not expose a single-row UUID lookup; cached implicitly by WP's $wpdb result + we hit this path only on webhook delivery (low frequency).
         $order_id = $wpdb->get_var(
             $wpdb->prepare(
                 "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_almc_vf_invoice_uuid' AND meta_value = %s LIMIT 1",
