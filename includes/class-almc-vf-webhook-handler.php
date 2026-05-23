@@ -89,6 +89,11 @@ class ALMC_VF_Webhook_Handler {
             exit;
         }
 
+        // Whitelist + sanitize before forwarding anywhere (including do_action callbacks).
+        // json_decode() parses but does NOT sanitize, so this is required by WP guidelines
+        // when the decoded array is passed to third-party code via do_action.
+        $payload = self::sanitize_payload( $payload );
+
         // Process the webhook event.
         $result = self::process_event( $payload );
 
@@ -100,6 +105,105 @@ class ALMC_VF_Webhook_Handler {
 
         wp_send_json_success( array( 'message' => 'Webhook processed' ) );
         exit;
+    }
+
+    /**
+     * Sanitize the decoded webhook payload.
+     *
+     * Applies a strict whitelist of expected fields and types BEFORE the array is
+     * forwarded to any third-party code (e.g. via the `almc_vf_webhook_processed`
+     * action). Unknown keys are dropped on purpose; this is the right place to
+     * neutralise malicious data that json_decode() happily preserved.
+     *
+     * @param array $payload Decoded JSON payload.
+     * @return array Sanitised payload with the same shape.
+     */
+    private static function sanitize_payload( $payload ) {
+        $top_event = isset( $payload['event_type'] ) && is_scalar( $payload['event_type'] )
+            ? sanitize_text_field( (string) $payload['event_type'] )
+            : '';
+        $top_uuid = isset( $payload['invoice_uuid'] ) && is_scalar( $payload['invoice_uuid'] )
+            ? sanitize_text_field( (string) $payload['invoice_uuid'] )
+            : '';
+        $top_status = isset( $payload['status'] ) && is_scalar( $payload['status'] )
+            ? sanitize_text_field( (string) $payload['status'] )
+            : '';
+        $top_error = isset( $payload['error'] ) && is_scalar( $payload['error'] )
+            ? sanitize_text_field( (string) $payload['error'] )
+            : '';
+
+        $top_aeat = array();
+        if ( isset( $payload['aeat_response'] ) && is_array( $payload['aeat_response'] ) ) {
+            $top_aeat = self::sanitize_aeat_response( $payload['aeat_response'] );
+        }
+
+        $data_in = isset( $payload['data'] ) && is_array( $payload['data'] ) ? $payload['data'] : array();
+        $data_out = array(
+            'invoice_uuid'   => isset( $data_in['invoice_uuid'] ) && is_scalar( $data_in['invoice_uuid'] )
+                ? sanitize_text_field( (string) $data_in['invoice_uuid'] )
+                : '',
+            'uuid'           => isset( $data_in['uuid'] ) && is_scalar( $data_in['uuid'] )
+                ? sanitize_text_field( (string) $data_in['uuid'] )
+                : '',
+            'status'         => isset( $data_in['status'] ) && is_scalar( $data_in['status'] )
+                ? sanitize_text_field( (string) $data_in['status'] )
+                : '',
+            'last_error'     => isset( $data_in['last_error'] ) && is_scalar( $data_in['last_error'] )
+                ? sanitize_text_field( (string) $data_in['last_error'] )
+                : '',
+            'huella'         => isset( $data_in['huella'] ) && is_scalar( $data_in['huella'] )
+                ? sanitize_text_field( (string) $data_in['huella'] )
+                : '',
+            'invoice_number' => isset( $data_in['invoice_number'] ) && is_scalar( $data_in['invoice_number'] )
+                ? sanitize_text_field( (string) $data_in['invoice_number'] )
+                : '',
+            'aeat_response'  => isset( $data_in['aeat_response'] ) && is_array( $data_in['aeat_response'] )
+                ? self::sanitize_aeat_response( $data_in['aeat_response'] )
+                : array(),
+        );
+
+        return array(
+            'event_type'    => $top_event,
+            'invoice_uuid'  => $top_uuid,
+            'status'        => $top_status,
+            'error'         => $top_error,
+            'aeat_response' => $top_aeat,
+            'data'          => $data_out,
+        );
+    }
+
+    /**
+     * Sanitize the nested `aeat_response` structure (scalars only, one level deep).
+     *
+     * @param array $aeat AEAT response sub-array.
+     * @return array
+     */
+    private static function sanitize_aeat_response( $aeat ) {
+        $clean = array();
+        foreach ( $aeat as $k => $v ) {
+            $key = is_string( $k ) ? sanitize_key( $k ) : (string) (int) $k;
+            if ( '' === $key ) {
+                continue;
+            }
+            if ( is_scalar( $v ) ) {
+                $clean[ $key ] = sanitize_text_field( (string) $v );
+            } elseif ( is_array( $v ) ) {
+                // One level of nesting (covers Verifactu's RespuestaLinea/etc.).
+                $sub = array();
+                foreach ( $v as $kk => $vv ) {
+                    if ( ! is_scalar( $vv ) ) {
+                        continue;
+                    }
+                    $sub_key = is_string( $kk ) ? sanitize_key( $kk ) : (string) (int) $kk;
+                    if ( '' === $sub_key ) {
+                        continue;
+                    }
+                    $sub[ $sub_key ] = sanitize_text_field( (string) $vv );
+                }
+                $clean[ $key ] = $sub;
+            }
+        }
+        return $clean;
     }
 
     /**
@@ -178,21 +282,19 @@ class ALMC_VF_Webhook_Handler {
             $order->update_meta_data( '_almc_vf_status', $status );
         }
 
-        // Store additional data from the payload.
-        if ( isset( $payload['aeat_response'] ) ) {
+        // Store additional data from the payload (payload is already sanitised, see sanitize_payload()).
+        if ( ! empty( $payload['aeat_response'] ) ) {
             $order->update_meta_data( '_almc_vf_aeat_response', wp_json_encode( $payload['aeat_response'] ) );
-        }
-        if ( isset( $payload['data']['aeat_response'] ) ) {
+        } elseif ( ! empty( $payload['data']['aeat_response'] ) ) {
             $order->update_meta_data( '_almc_vf_aeat_response', wp_json_encode( $payload['data']['aeat_response'] ) );
         }
-        if ( isset( $payload['error'] ) ) {
-            $order->update_meta_data( '_almc_vf_last_error', sanitize_text_field( $payload['error'] ) );
+        if ( ! empty( $payload['error'] ) ) {
+            $order->update_meta_data( '_almc_vf_last_error', $payload['error'] );
+        } elseif ( ! empty( $payload['data']['last_error'] ) ) {
+            $order->update_meta_data( '_almc_vf_last_error', $payload['data']['last_error'] );
         }
-        if ( isset( $payload['data']['last_error'] ) ) {
-            $order->update_meta_data( '_almc_vf_last_error', sanitize_text_field( $payload['data']['last_error'] ) );
-        }
-        if ( isset( $payload['data']['huella'] ) ) {
-            $order->update_meta_data( '_almc_vf_huella', sanitize_text_field( $payload['data']['huella'] ) );
+        if ( ! empty( $payload['data']['huella'] ) ) {
+            $order->update_meta_data( '_almc_vf_huella', $payload['data']['huella'] );
         }
 
         $order->save();
@@ -200,7 +302,7 @@ class ALMC_VF_Webhook_Handler {
         // Add order note.
         $note = sprintf(
             /* translators: 1: event type, 2: old status, 3: new status */
-            __( 'VeriFactu Webhook: %1$s. Estado: "%2$s" -> "%3$s".', 'almc-verifactu' ),
+            __( 'VeriFactu Webhook: %1$s. Estado: "%2$s" -> "%3$s".', 'almc-electronic-invoicing-verifactu' ),
             ! empty( $event_type ) ? $event_type : 'status_update',
             $old_status,
             $status

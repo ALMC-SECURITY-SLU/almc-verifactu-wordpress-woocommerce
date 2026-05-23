@@ -1,18 +1,20 @@
-=== ALMC VeriFactu ===
+=== ALMC Electronic Invoicing for VeriFactu ===
 Contributors: almcsecurity
 Tags: verifactu, aeat, billing, invoicing, sii
 Requires at least: 5.8
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Automatically send your store invoices to the Spanish Tax Agency (AEAT) using the Verifactu SaaS by ALMC. Compatible with WooCommerce.
+Send your store invoices to the Spanish Tax Agency (AEAT) using the public VeriFactu specification, via the ALMC SaaS. Compatible with WooCommerce.
 
 == Description ==
 
-ALMC VeriFactu connects your online store with the VeriFactu SaaS API (almc.es) to comply with the electronic invoicing regulation of the Spanish Tax Agency (AEAT - Agencia Estatal de Administracion Tributaria). The plugin is compatible with WooCommerce.
+ALMC Electronic Invoicing for VeriFactu connects your online store with the ALMC SaaS API (almc.es) so you can comply with the electronic invoicing specification published by the Spanish Tax Agency (AEAT - Agencia Estatal de Administracion Tributaria) under Royal Decree 1007/2023 (the "VeriFactu" specification). The plugin is compatible with WooCommerce.
+
+This plugin is **not affiliated with or endorsed by the AEAT**. "VeriFactu" is the public technical name of the AEAT specification it implements.
 
 Verifactu is mandatory for businesses and self-employed individuals in Spain that issue invoices using electronic billing software. This plugin automates the entire signing and submission flow so you do not have to think about it.
 
@@ -59,11 +61,11 @@ In the VeriFactu panel, "API Keys" section, click "Create new key". Give it a de
 
 Three options:
 
-a) From the WordPress repository: go to Plugins > Add New, search for "ALMC VeriFactu" and click "Install Now" then "Activate".
+a) From the WordPress repository: go to Plugins > Add New, search for "ALMC Electronic Invoicing for VeriFactu" and click "Install Now" then "Activate".
 
-b) Manually (.zip): download the `almc-verifactu.zip` file, go to Plugins > Add New > Upload Plugin, select the zip and click "Install Now" then "Activate".
+b) Manually (.zip): download the `almc-electronic-invoicing-verifactu.zip` file, go to Plugins > Add New > Upload Plugin, select the zip and click "Install Now" then "Activate".
 
-c) Via FTP: unzip the file and upload the `almc-verifactu` folder to the `/wp-content/plugins/` directory of your installation. Then activate it from the Plugins menu.
+c) Via FTP: unzip the file and upload the `almc-electronic-invoicing-verifactu` folder to the `/wp-content/plugins/` directory of your installation. Then activate it from the Plugins menu.
 
 = Step 6 - Configure the VeriFactu connection =
 
@@ -147,7 +149,7 @@ The plugin records the error in the order notes and shows the "Rejected" status 
 
 == External services ==
 
-This plugin connects to the ALMC VeriFactu SaaS API (`https://almc.es/api/verifactu/v1/`) to register your order invoices with AEAT (the Spanish Tax Agency) under the Verifactu regulation (Royal Decree 1007/2023).
+This plugin connects to the ALMC SaaS API for VeriFactu (`https://almc.es/api/verifactu/v1/`) to register your order invoices with AEAT (the Spanish Tax Agency) under the VeriFactu specification (Royal Decree 1007/2023). The plugin is not affiliated with AEAT.
 
 **What data is sent and when:**
 
@@ -182,17 +184,27 @@ This plugin does not store additional personal data in your WordPress installati
 
 == Changelog ==
 
+= 1.0.1 =
+* Renamed plugin to "ALMC Electronic Invoicing for VeriFactu" and slug to "almc-electronic-invoicing-verifactu" to clarify the AEAT specification reference and remove any implied affiliation.
+* Replaced inline `<style>` block in the onboarding panel with `wp_enqueue_style()` (assets/css/almc-onboarding.css).
+* Replaced inline `<script>` in the setup-notice dismiss handler with `wp_enqueue_script()` (assets/js/almc-setup-notice.js).
+* Hardened webhook input handling: decoded JSON payload now goes through an explicit whitelist + per-field sanitization before being passed to any `do_action` callback.
+* Internationalisation: updated text-domain to the new slug across all PHP files.
+
 = 1.0.0 =
-* Initial version
-* Automatic and manual invoice submission
-* Full mapping of orders to VeriFactu invoices
-* Order status panel with visual badges
-* Webhook receiver
-* HPOS compatibility
-* Settings page with connection test
-* Support for corrective invoices R1-R5
+* Initial version.
+* Automatic and manual invoice submission.
+* Full mapping of orders to VeriFactu invoices.
+* Order status panel with visual badges.
+* Webhook receiver.
+* HPOS compatibility.
+* Settings page with connection test.
+* Support for corrective invoices R1-R5.
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+Name/slug change and security hardening for WordPress.org compliance. Update recommended.
 
 = 1.0.0 =
 Initial plugin release.

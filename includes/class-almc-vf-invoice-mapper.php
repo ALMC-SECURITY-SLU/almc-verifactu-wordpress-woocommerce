@@ -97,7 +97,7 @@ class ALMC_VF_Invoice_Mapper {
             }
 
             $items[] = array(
-                'description' => __( 'Gastos de envio', 'almc-verifactu' ),
+                'description' => __( 'Gastos de envio', 'almc-electronic-invoicing-verifactu' ),
                 'quantity'    => 1,
                 'unit_price'  => $shipping_total,
                 'tax_rate'    => $shipping_tax_rate,
@@ -169,7 +169,7 @@ class ALMC_VF_Invoice_Mapper {
             'recipient_country' => $order->get_billing_country() ? $order->get_billing_country() : 'ES',
             'description'       => sprintf(
                 /* translators: %s: order number */
-                __( 'Pedido #%s', 'almc-verifactu' ),
+                __( 'Pedido #%s', 'almc-electronic-invoicing-verifactu' ),
                 $order->get_order_number()
             ),
             'items'             => $items,
@@ -212,20 +212,20 @@ class ALMC_VF_Invoice_Mapper {
                 }
             }
             if ( ! $found ) {
-                $errors[] = __( 'El pedido no tiene NIF/CIF del cliente.', 'almc-verifactu' );
+                $errors[] = __( 'El pedido no tiene NIF/CIF del cliente.', 'almc-electronic-invoicing-verifactu' );
             }
         }
 
         // Check items.
         if ( count( $order->get_items() ) < 1 ) {
-            $errors[] = __( 'El pedido no tiene articulos.', 'almc-verifactu' );
+            $errors[] = __( 'El pedido no tiene articulos.', 'almc-electronic-invoicing-verifactu' );
         }
 
         // Check billing name.
         $name = trim( $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() );
         $company = $order->get_billing_company();
         if ( empty( $name ) && empty( $company ) ) {
-            $errors[] = __( 'El pedido no tiene nombre ni empresa de facturacion.', 'almc-verifactu' );
+            $errors[] = __( 'El pedido no tiene nombre ni empresa de facturacion.', 'almc-electronic-invoicing-verifactu' );
         }
 
         if ( ! empty( $errors ) ) {

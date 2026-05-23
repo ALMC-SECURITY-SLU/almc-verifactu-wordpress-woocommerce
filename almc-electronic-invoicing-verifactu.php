@@ -1,13 +1,13 @@
 <?php
 /**
- * Plugin Name: ALMC VeriFactu
+ * Plugin Name: ALMC Electronic Invoicing for VeriFactu
  * Plugin URI: https://almc.es/verifactu/
- * Description: Envia automaticamente las facturas de tu tienda online a la AEAT (Verifactu) mediante el SaaS de ALMC. Compatible con WooCommerce.
- * Version: 1.0.0
+ * Description: Sends WooCommerce orders to AEAT (Spanish Tax Agency) using the ALMC VeriFactu SaaS. Implements the public VeriFactu technical specification (Royal Decree 1007/2023). Not affiliated with AEAT.
+ * Version: 1.0.1
  * Author: ALMC Security S.L.U.
  * Author URI: https://almc.es
  * License: GPL-2.0-or-later
- * Text Domain: almc-verifactu
+ * Text Domain: almc-electronic-invoicing-verifactu
  * Domain Path: /languages
  * Requires at least: 5.8
  * Requires PHP: 7.4
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'ALMC_VF_VERSION', '1.0.0' );
+define( 'ALMC_VF_VERSION', '1.0.1' );
 define( 'ALMC_VF_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ALMC_VF_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'ALMC_VF_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
@@ -53,7 +53,7 @@ function almc_vf_init() {
  * Admin notice when WooCommerce is not active.
  */
 function almc_vf_woocommerce_missing_notice() {
-    echo '<div class="error"><p><strong>ALMC VeriFactu</strong> requiere WooCommerce activo.</p></div>';
+    echo '<div class="error"><p><strong>' . esc_html__( 'ALMC Electronic Invoicing for VeriFactu', 'almc-electronic-invoicing-verifactu' ) . '</strong> ' . esc_html__( 'requiere WooCommerce activo.', 'almc-electronic-invoicing-verifactu' ) . '</p></div>';
 }
 
 /**
@@ -90,7 +90,7 @@ function almc_vf_deactivate() {
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'almc_vf_plugin_action_links' );
 
 function almc_vf_plugin_action_links( $links ) {
-    $settings_link = '<a href="' . admin_url( 'admin.php?page=almc-verifactu' ) . '">' . __( 'Ajustes', 'almc-verifactu' ) . '</a>';
+    $settings_link = '<a href="' . admin_url( 'admin.php?page=almc-electronic-invoicing-verifactu' ) . '">' . __( 'Ajustes', 'almc-electronic-invoicing-verifactu' ) . '</a>';
     array_unshift( $links, $settings_link );
     return $links;
 }
