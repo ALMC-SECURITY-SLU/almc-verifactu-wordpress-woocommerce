@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- this is a partial included from render_metabox_content(); variables are include-scoped locals, not real globals.
+
 $vf_uuid           = $order->get_meta( '_almc_vf_invoice_uuid' );
 $vf_status         = $order->get_meta( '_almc_vf_status' );
 $vf_invoice_number = $order->get_meta( '_almc_vf_invoice_number' );

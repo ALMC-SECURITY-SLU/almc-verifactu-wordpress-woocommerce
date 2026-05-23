@@ -8,6 +8,8 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
+
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- this is a partial included from render_settings_page(); variables here are include-scoped locals, not real globals.
 ?>
 <div class="wrap almc-vf-settings">
     <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>

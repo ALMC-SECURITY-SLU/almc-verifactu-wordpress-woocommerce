@@ -281,7 +281,7 @@ class ALMC_VF_Admin {
                 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix, no untrusted input, lookup cached for 5min.
                 $exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $hpos_table ) );
                 if ( $exists === $hpos_table ) {
-                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $hpos_table es identifier seguro (prefix de $wpdb + literal), no es input externo. Resultado se cachea.
+                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- $hpos_table es identifier seguro ($wpdb->prefix + literal), no input externo. Resultado cacheado 5min.
                     $count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$hpos_table} WHERE meta_key = '_almc_vf_invoice_uuid' AND meta_value <> ''" );
                     $first_invoice_sent = $count > 0 ? 1 : 0;
                 }

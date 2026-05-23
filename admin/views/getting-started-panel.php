@@ -17,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- this is a partial included from render_settings_page(); variables here are include-scoped locals, not real globals.
+
 $pct = $total_count > 0 ? round( ( $completed_count / $total_count ) * 100 ) : 0;
 $all_done = $completed_count === $total_count;
 ?>
