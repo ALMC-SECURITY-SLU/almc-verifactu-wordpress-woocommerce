@@ -3,7 +3,7 @@
  * Plugin Name: ALMC Electronic Invoicing for VeriFactu
  * Plugin URI: https://almc.es/verifactu/
  * Description: Sends WooCommerce orders to AEAT (Spanish Tax Agency) using the ALMC VeriFactu SaaS. Implements the public VeriFactu technical specification (Royal Decree 1007/2023). Not affiliated with AEAT.
- * Version: 1.0.1
+ * Version: 1.1.0
  * Author: ALMC Security S.L.U.
  * Author URI: https://almc.es
  * License: GPL-2.0-or-later
@@ -19,18 +19,23 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'ALMC_VF_VERSION', '1.0.1' );
+define( 'ALMC_VF_VERSION', '1.1.0' );
 define( 'ALMC_VF_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ALMC_VF_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'ALMC_VF_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 // Autoload classes.
+require_once ALMC_VF_PLUGIN_DIR . 'includes/class-almc-vf-crypto.php';
 require_once ALMC_VF_PLUGIN_DIR . 'includes/class-almc-vf-api-client.php';
 require_once ALMC_VF_PLUGIN_DIR . 'includes/class-almc-vf-invoice-mapper.php';
 require_once ALMC_VF_PLUGIN_DIR . 'includes/class-almc-vf-settings.php';
 require_once ALMC_VF_PLUGIN_DIR . 'includes/class-almc-vf-order-handler.php';
 require_once ALMC_VF_PLUGIN_DIR . 'includes/class-almc-vf-webhook-handler.php';
 require_once ALMC_VF_PLUGIN_DIR . 'admin/class-almc-vf-admin.php';
+
+// Encryption-at-rest must register its option filters as early as possible,
+// before Settings::init() or any code calls update_option() on protected keys.
+ALMC_VF_Crypto::init();
 
 /**
  * Initialize plugin after all plugins are loaded.

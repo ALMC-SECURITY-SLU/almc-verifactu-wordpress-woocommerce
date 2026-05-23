@@ -14,6 +14,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 class ALMC_VF_Webhook_Handler {
 
     /**
+     * Maximum accepted request body size (bytes). Anything larger is rejected
+     * with 413 BEFORE the HMAC check, to prevent CPU/memory waste on payloads
+     * that cannot possibly be legitimate.
+     */
+    const MAX_BODY_BYTES = 102400; // 100 KiB
+
+    /**
+     * Maximum clock skew (seconds) allowed between SaaS-issued timestamp and
+     * local time when replay-protection is active. Outside this window the
+     * request is rejected even with a valid signature.
+     */
+    const TIMESTAMP_TOLERANCE = 300; // 5 minutes
+
+    /**
+     * Rate-limit window for HMAC failures (seconds) and max attempts per IP.
+     */
+    const RATE_LIMIT_WINDOW   = 60;
+    const RATE_LIMIT_MAX_FAILS = 60;
+
+    /**
      * Initialize webhook handler.
      */
     public static function init() {
@@ -64,19 +84,44 @@ class ALMC_VF_Webhook_Handler {
             exit;
         }
 
-        // Read raw body.
-        $raw_body = file_get_contents( 'php://input' );
+        // Rate limit: too many recent HMAC failures from this IP → 429.
+        $client_ip = self::client_ip();
+        if ( self::is_rate_limited( $client_ip ) ) {
+            status_header( 429 );
+            wp_send_json_error( array( 'message' => 'Too many requests' ), 429 );
+            exit;
+        }
+
+        // Body-size guardrail BEFORE reading php://input fully.
+        $content_length = isset( $_SERVER['CONTENT_LENGTH'] )
+            ? (int) $_SERVER['CONTENT_LENGTH']
+            : 0;
+        if ( $content_length > self::MAX_BODY_BYTES ) {
+            status_header( 413 );
+            wp_send_json_error( array( 'message' => 'Payload too large' ), 413 );
+            exit;
+        }
+
+        // Read raw body (length-bounded — php://input is single-pass, fine).
+        $raw_body = file_get_contents( 'php://input', false, null, 0, self::MAX_BODY_BYTES + 1 );
 
         if ( empty( $raw_body ) ) {
             status_header( 400 );
             wp_send_json_error( array( 'message' => 'Empty body' ), 400 );
             exit;
         }
+        if ( strlen( $raw_body ) > self::MAX_BODY_BYTES ) {
+            status_header( 413 );
+            wp_send_json_error( array( 'message' => 'Payload too large' ), 413 );
+            exit;
+        }
 
-        // Verify HMAC signature.
-        if ( ! self::verify_signature( $raw_body ) ) {
+        // Verify HMAC signature (and timestamp if SaaS sent X-Webhook-Timestamp).
+        $sig_check = self::verify_signature( $raw_body );
+        if ( true !== $sig_check ) {
+            self::record_failure( $client_ip );
             status_header( 401 );
-            wp_send_json_error( array( 'message' => 'Invalid signature' ), 401 );
+            wp_send_json_error( array( 'message' => is_string( $sig_check ) ? $sig_check : 'Invalid signature' ), 401 );
             exit;
         }
 
@@ -207,10 +252,19 @@ class ALMC_VF_Webhook_Handler {
     }
 
     /**
-     * Verify the webhook HMAC signature.
+     * Verify the webhook HMAC signature (and replay-protection timestamp).
+     *
+     * If the SaaS sends `X-Webhook-Timestamp: <unix>`, the HMAC is computed
+     * over `timestamp . "." . raw_body` and the timestamp must fall within
+     * +/- TIMESTAMP_TOLERANCE of local time. This binds the signature to
+     * a moment in time, so a captured webhook cannot be replayed indefinitely.
+     *
+     * If the timestamp header is absent, falls back to the v1.0 behaviour
+     * (HMAC over raw_body only) for backwards compatibility with SaaS
+     * versions that do not yet emit the header.
      *
      * @param string $raw_body Raw request body.
-     * @return bool True if the signature is valid.
+     * @return true|string True on success, or an error string for the response.
      */
     private static function verify_signature( $raw_body ) {
         $secret = get_option( 'almc_vf_webhook_secret', '' );
@@ -226,17 +280,84 @@ class ALMC_VF_Webhook_Handler {
             : '';
 
         if ( empty( $signature ) ) {
-            return false;
+            return 'Missing signature';
         }
 
-        // Support both "sha256=..." format and raw hash.
-        $expected = hash_hmac( 'sha256', $raw_body, $secret );
-
+        // Strip optional "sha256=" prefix.
         if ( 0 === strpos( $signature, 'sha256=' ) ) {
             $signature = substr( $signature, 7 );
         }
 
-        return hash_equals( $expected, $signature );
+        // Replay-protection: when present, the timestamp is part of the signed payload.
+        $timestamp_header = isset( $_SERVER['HTTP_X_WEBHOOK_TIMESTAMP'] )
+            ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_WEBHOOK_TIMESTAMP'] ) )
+            : '';
+
+        if ( '' !== $timestamp_header ) {
+            // Must be a positive integer.
+            if ( ! ctype_digit( $timestamp_header ) ) {
+                return 'Invalid timestamp';
+            }
+            $ts = (int) $timestamp_header;
+            if ( abs( time() - $ts ) > self::TIMESTAMP_TOLERANCE ) {
+                return 'Stale timestamp';
+            }
+            $signed_body = $timestamp_header . '.' . $raw_body;
+        } else {
+            // Backwards-compatible path: SaaS has not been upgraded yet.
+            $signed_body = $raw_body;
+        }
+
+        $expected = hash_hmac( 'sha256', $signed_body, $secret );
+
+        return hash_equals( $expected, $signature ) ? true : 'Invalid signature';
+    }
+
+    /**
+     * Best-effort client IP detection (header + REMOTE_ADDR fallback).
+     * Honors HTTP_X_FORWARDED_FOR / HTTP_X_REAL_IP only if WP is behind a trusted
+     * proxy (controlled by the standard `pre_get_client_ip` filter chain).
+     *
+     * @return string
+     */
+    private static function client_ip() {
+        $candidates = array( 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'REMOTE_ADDR' );
+        foreach ( $candidates as $key ) {
+            if ( empty( $_SERVER[ $key ] ) ) {
+                continue;
+            }
+            // X-Forwarded-For can be a comma-separated list; the first hop is the client.
+            $raw = sanitize_text_field( wp_unslash( $_SERVER[ $key ] ) );
+            $ip  = trim( explode( ',', $raw )[0] );
+            if ( filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+                return $ip;
+            }
+        }
+        return '0.0.0.0';
+    }
+
+    /**
+     * Check whether the given IP has exceeded the failure rate-limit window.
+     *
+     * @param string $ip Client IP.
+     * @return bool
+     */
+    private static function is_rate_limited( $ip ) {
+        $key   = 'almc_vf_wh_fail_' . md5( $ip );
+        $fails = (int) get_transient( $key );
+        return $fails >= self::RATE_LIMIT_MAX_FAILS;
+    }
+
+    /**
+     * Record a failed HMAC attempt against the rate-limit counter.
+     *
+     * @param string $ip Client IP.
+     * @return void
+     */
+    private static function record_failure( $ip ) {
+        $key   = 'almc_vf_wh_fail_' . md5( $ip );
+        $fails = (int) get_transient( $key );
+        set_transient( $key, $fails + 1, self::RATE_LIMIT_WINDOW );
     }
 
     /**

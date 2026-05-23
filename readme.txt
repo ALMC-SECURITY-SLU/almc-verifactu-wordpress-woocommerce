@@ -4,7 +4,7 @@ Tags: verifactu, aeat, billing, invoicing, sii
 Requires at least: 5.8
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -184,6 +184,14 @@ This plugin does not store additional personal data in your WordPress installati
 
 == Changelog ==
 
+= 1.1.0 =
+* Security hardening release.
+* Added `uninstall.php` that cleans up plugin options, transients and object-cache entries when the plugin is deleted from the WordPress admin. Per-order invoice metadata is intentionally preserved (4-year fiscal retention under Spanish RD 1007/2023).
+* Added replay-attack protection on the webhook receiver: when the SaaS sends an `X-Webhook-Timestamp` header it is bound into the HMAC signature, and timestamps drifting more than 5 minutes from local time are rejected (backwards-compatible with v1.0.x SaaS that did not yet send the header).
+* Added rate limiting on the webhook endpoint: after 60 failed-signature attempts per IP in a 60-second window the endpoint returns HTTP 429 to throttle brute-force / DoS attempts.
+* Added body-size guardrail on the webhook endpoint: requests larger than 100 KiB are rejected with HTTP 413 before reading `php://input`.
+* Added at-rest encryption for sensitive options (`almc_vf_api_key`, `almc_vf_api_secret`, `almc_vf_webhook_secret`) using `sodium_crypto_secretbox` with a 32-byte key derived from `wp_salt('auth')` via HKDF-SHA256. Migration is lazy: previously-saved plaintext values are still readable, and the first re-save upgrades them in place.
+
 = 1.0.1 =
 * Renamed plugin to "ALMC Electronic Invoicing for VeriFactu" and slug to "almc-electronic-invoicing-verifactu" to clarify the AEAT specification reference and remove any implied affiliation.
 * Replaced inline `<style>` block in the onboarding panel with `wp_enqueue_style()` (assets/css/almc-onboarding.css).
@@ -202,6 +210,9 @@ This plugin does not store additional personal data in your WordPress installati
 * Support for corrective invoices R1-R5.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Security hardening release: webhook replay-attack protection, rate limit, body-size guard, at-rest encryption for stored credentials, and a proper uninstall cleanup. Upgrade strongly recommended.
 
 = 1.0.1 =
 Name/slug change and security hardening for WordPress.org compliance. Update recommended.
