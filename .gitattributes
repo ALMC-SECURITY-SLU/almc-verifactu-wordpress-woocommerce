@@ -1,0 +1,27 @@
+# Files that should NEVER end up in the ZIP we distribute via wordpress.org.
+# `git archive` respects `export-ignore`, so the artifact stays clean even
+# if we change the build pipeline later.
+#
+# Note: dot-files are forbidden by the wordpress.org automated plugin scan
+# ("hidden_files: Hidden files are not permitted"). The list below covers
+# what currently lives in the repo plus the most common dot-files / dev-only
+# files that could sneak in over time.
+
+.gitignore       export-ignore
+.gitattributes   export-ignore
+.github          export-ignore
+.editorconfig    export-ignore
+.vscode          export-ignore
+.idea            export-ignore
+.DS_Store        export-ignore
+Thumbs.db        export-ignore
+
+# Dev-only top-level docs (wp.org uses readme.txt, not README.md).
+# README.md is kept for GitHub but you can flip the line below if you'd
+# rather not ship it. Currently we DO ship it -- it does no harm.
+# README.md      export-ignore
+
+# Tests / fixtures / CI configs would go here too when we add them:
+# tests/         export-ignore
+# phpunit.xml    export-ignore
+# composer.lock  export-ignore
