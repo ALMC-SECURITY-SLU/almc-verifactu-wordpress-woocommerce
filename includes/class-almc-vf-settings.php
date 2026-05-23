@@ -39,9 +39,9 @@ class ALMC_VF_Settings {
         // ── Connection Section ──
         add_settings_section(
             'almc_vf_section_connection',
-            __( 'Conexion API', 'almc-electronic-invoicing-verifactu' ),
+            __( 'Conexion API', 'almc-verifactu' ),
             array( __CLASS__, 'section_connection_callback' ),
-            'almc-electronic-invoicing-verifactu'
+            'almc-verifactu'
         );
 
         // API URL — registrada pero NO mostrada en el flujo principal.
@@ -62,13 +62,13 @@ class ALMC_VF_Settings {
         ) );
         add_settings_field(
             'almc_vf_api_key',
-            __( 'Clave API', 'almc-electronic-invoicing-verifactu' ),
+            __( 'Clave API', 'almc-verifactu' ),
             array( __CLASS__, 'field_text' ),
-            'almc-electronic-invoicing-verifactu',
+            'almc-verifactu',
             'almc_vf_section_connection',
             array(
                 'id'          => 'almc_vf_api_key',
-                'description' => __( 'Tu clave API de VeriFactu (X-Api-Key).', 'almc-electronic-invoicing-verifactu' ),
+                'description' => __( 'Tu clave API de VeriFactu (X-Api-Key).', 'almc-verifactu' ),
                 'class'       => 'regular-text',
             )
         );
@@ -81,13 +81,13 @@ class ALMC_VF_Settings {
         ) );
         add_settings_field(
             'almc_vf_api_secret',
-            __( 'Secreto API', 'almc-electronic-invoicing-verifactu' ),
+            __( 'Secreto API', 'almc-verifactu' ),
             array( __CLASS__, 'field_password' ),
-            'almc-electronic-invoicing-verifactu',
+            'almc-verifactu',
             'almc_vf_section_connection',
             array(
                 'id'          => 'almc_vf_api_secret',
-                'description' => __( 'Secreto API (para firma HMAC, uso futuro).', 'almc-electronic-invoicing-verifactu' ),
+                'description' => __( 'Secreto API (para firma HMAC, uso futuro).', 'almc-verifactu' ),
                 'class'       => 'regular-text',
             )
         );
@@ -100,26 +100,26 @@ class ALMC_VF_Settings {
         ) );
         add_settings_field(
             'almc_vf_environment',
-            __( 'Entorno', 'almc-electronic-invoicing-verifactu' ),
+            __( 'Entorno', 'almc-verifactu' ),
             array( __CLASS__, 'field_select' ),
-            'almc-electronic-invoicing-verifactu',
+            'almc-verifactu',
             'almc_vf_section_connection',
             array(
                 'id'      => 'almc_vf_environment',
                 'options' => array(
-                    'sandbox'    => __( 'Sandbox (pruebas)', 'almc-electronic-invoicing-verifactu' ),
-                    'production' => __( 'Produccion', 'almc-electronic-invoicing-verifactu' ),
+                    'sandbox'    => __( 'Sandbox (pruebas)', 'almc-verifactu' ),
+                    'production' => __( 'Produccion', 'almc-verifactu' ),
                 ),
-                'description' => __( 'Selecciona el entorno de la API.', 'almc-electronic-invoicing-verifactu' ),
+                'description' => __( 'Selecciona el entorno de la API.', 'almc-verifactu' ),
             )
         );
 
         // ── Invoice Section ──
         add_settings_section(
             'almc_vf_section_invoice',
-            __( 'Facturacion', 'almc-electronic-invoicing-verifactu' ),
+            __( 'Facturacion', 'almc-verifactu' ),
             array( __CLASS__, 'section_invoice_callback' ),
-            'almc-electronic-invoicing-verifactu'
+            'almc-verifactu'
         );
 
         // Series Code.
@@ -130,14 +130,14 @@ class ALMC_VF_Settings {
         ) );
         add_settings_field(
             'almc_vf_series_code',
-            __( 'Codigo de serie', 'almc-electronic-invoicing-verifactu' ),
+            __( 'Codigo de serie', 'almc-verifactu' ),
             array( __CLASS__, 'field_text' ),
-            'almc-electronic-invoicing-verifactu',
+            'almc-verifactu',
             'almc_vf_section_invoice',
             array(
                 'id'          => 'almc_vf_series_code',
                 'default'     => 'WC',
-                'description' => __( 'Codigo de serie para las facturas (p.ej. WC-2026). Debe existir en VeriFactu.', 'almc-electronic-invoicing-verifactu' ),
+                'description' => __( 'Codigo de serie para las facturas (p.ej. WC-2026). Debe existir en VeriFactu.', 'almc-verifactu' ),
                 'class'       => 'regular-text',
             )
         );
@@ -150,13 +150,13 @@ class ALMC_VF_Settings {
         ) );
         add_settings_field(
             'almc_vf_auto_submit',
-            __( 'Envio automatico', 'almc-electronic-invoicing-verifactu' ),
+            __( 'Envio automatico', 'almc-verifactu' ),
             array( __CLASS__, 'field_checkbox' ),
-            'almc-electronic-invoicing-verifactu',
+            'almc-verifactu',
             'almc_vf_section_invoice',
             array(
                 'id'          => 'almc_vf_auto_submit',
-                'label'       => __( 'Enviar automaticamente las facturas a la AEAT al completar el pedido.', 'almc-electronic-invoicing-verifactu' ),
+                'label'       => __( 'Enviar automaticamente las facturas a la AEAT al completar el pedido.', 'almc-verifactu' ),
             )
         );
 
@@ -168,18 +168,18 @@ class ALMC_VF_Settings {
         ) );
         add_settings_field(
             'almc_vf_auto_submit_statuses',
-            __( 'Estados para envio', 'almc-electronic-invoicing-verifactu' ),
+            __( 'Estados para envio', 'almc-verifactu' ),
             array( __CLASS__, 'field_multiselect' ),
-            'almc-electronic-invoicing-verifactu',
+            'almc-verifactu',
             'almc_vf_section_invoice',
             array(
                 'id'      => 'almc_vf_auto_submit_statuses',
                 'options' => array(
-                    'processing' => __( 'Procesando', 'almc-electronic-invoicing-verifactu' ),
-                    'completed'  => __( 'Completado', 'almc-electronic-invoicing-verifactu' ),
-                    'on-hold'    => __( 'En espera', 'almc-electronic-invoicing-verifactu' ),
+                    'processing' => __( 'Procesando', 'almc-verifactu' ),
+                    'completed'  => __( 'Completado', 'almc-verifactu' ),
+                    'on-hold'    => __( 'En espera', 'almc-verifactu' ),
                 ),
-                'description' => __( 'Estados del pedido que dispararan el envio automatico.', 'almc-electronic-invoicing-verifactu' ),
+                'description' => __( 'Estados del pedido que dispararan el envio automatico.', 'almc-verifactu' ),
             )
         );
 
@@ -191,14 +191,14 @@ class ALMC_VF_Settings {
         ) );
         add_settings_field(
             'almc_vf_nif_field',
-            __( 'Campo NIF', 'almc-electronic-invoicing-verifactu' ),
+            __( 'Campo NIF', 'almc-verifactu' ),
             array( __CLASS__, 'field_text' ),
-            'almc-electronic-invoicing-verifactu',
+            'almc-verifactu',
             'almc_vf_section_invoice',
             array(
                 'id'          => 'almc_vf_nif_field',
                 'default'     => '_billing_nif',
-                'description' => __( 'Nombre del meta campo donde se almacena el NIF/CIF del cliente.', 'almc-electronic-invoicing-verifactu' ),
+                'description' => __( 'Nombre del meta campo donde se almacena el NIF/CIF del cliente.', 'almc-verifactu' ),
                 'class'       => 'regular-text',
             )
         );
@@ -206,9 +206,9 @@ class ALMC_VF_Settings {
         // ── Webhook Section ──
         add_settings_section(
             'almc_vf_section_webhook',
-            __( 'Webhook', 'almc-electronic-invoicing-verifactu' ),
+            __( 'Webhook', 'almc-verifactu' ),
             array( __CLASS__, 'section_webhook_callback' ),
-            'almc-electronic-invoicing-verifactu'
+            'almc-verifactu'
         );
 
         // Webhook Secret (read-only).
@@ -219,13 +219,13 @@ class ALMC_VF_Settings {
         ) );
         add_settings_field(
             'almc_vf_webhook_secret',
-            __( 'Secreto Webhook', 'almc-electronic-invoicing-verifactu' ),
+            __( 'Secreto Webhook', 'almc-verifactu' ),
             array( __CLASS__, 'field_readonly' ),
-            'almc-electronic-invoicing-verifactu',
+            'almc-verifactu',
             'almc_vf_section_webhook',
             array(
                 'id'          => 'almc_vf_webhook_secret',
-                'description' => __( 'Secreto para verificar las notificaciones entrantes. Se genera automaticamente.', 'almc-electronic-invoicing-verifactu' ),
+                'description' => __( 'Secreto para verificar las notificaciones entrantes. Se genera automaticamente.', 'almc-verifactu' ),
                 'class'       => 'regular-text',
             )
         );
@@ -234,18 +234,18 @@ class ALMC_VF_Settings {
     // ── Section Callbacks ──
 
     public static function section_connection_callback() {
-        echo '<p>' . esc_html__( 'Configura la conexion con la API de VeriFactu SaaS.', 'almc-electronic-invoicing-verifactu' ) . '</p>';
+        echo '<p>' . esc_html__( 'Configura la conexion con la API de VeriFactu SaaS.', 'almc-verifactu' ) . '</p>';
     }
 
     public static function section_invoice_callback() {
-        echo '<p>' . esc_html__( 'Configura como se generan y envian las facturas.', 'almc-electronic-invoicing-verifactu' ) . '</p>';
+        echo '<p>' . esc_html__( 'Configura como se generan y envian las facturas.', 'almc-verifactu' ) . '</p>';
     }
 
     public static function section_webhook_callback() {
         $webhook_url = home_url( '/almc-verifactu/webhook/' );
         echo '<p>' . sprintf(
             /* translators: %s: webhook URL */
-            esc_html__( 'Configura esta URL en tu panel de VeriFactu para recibir notificaciones: %s', 'almc-electronic-invoicing-verifactu' ),
+            esc_html__( 'Configura esta URL en tu panel de VeriFactu para recibir notificaciones: %s', 'almc-verifactu' ),
             '<code>' . esc_html( $webhook_url ) . '</code>'
         ) . '</p>';
     }

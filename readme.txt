@@ -63,9 +63,9 @@ Three options:
 
 a) From the WordPress repository: go to Plugins > Add New, search for "ALMC Electronic Invoicing for VeriFactu" and click "Install Now" then "Activate".
 
-b) Manually (.zip): download the `almc-electronic-invoicing-verifactu.zip` file, go to Plugins > Add New > Upload Plugin, select the zip and click "Install Now" then "Activate".
+b) Manually (.zip): download the `almc-verifactu.zip` file, go to Plugins > Add New > Upload Plugin, select the zip and click "Install Now" then "Activate".
 
-c) Via FTP: unzip the file and upload the `almc-electronic-invoicing-verifactu` folder to the `/wp-content/plugins/` directory of your installation. Then activate it from the Plugins menu.
+c) Via FTP: unzip the file and upload the `almc-verifactu` folder to the `/wp-content/plugins/` directory of your installation. Then activate it from the Plugins menu.
 
 = Step 6 - Configure the VeriFactu connection =
 
@@ -185,11 +185,11 @@ This plugin does not store additional personal data in your WordPress installati
 == Changelog ==
 
 = 1.0.1 =
-* Renamed plugin to "ALMC Electronic Invoicing for VeriFactu" and slug to "almc-electronic-invoicing-verifactu" to clarify the AEAT specification reference and remove any implied affiliation.
+* Display name updated to "ALMC Electronic Invoicing for VeriFactu" to follow the "&lt;brand&gt; &lt;function&gt; for &lt;project&gt;" pattern recommended by the WordPress.org Plugin Review Team and clarify the absence of affiliation with AEAT. (Plugin slug and text-domain remain `almc-verifactu` for compatibility.)
 * Replaced inline `<style>` block in the onboarding panel with `wp_enqueue_style()` (assets/css/almc-onboarding.css).
 * Replaced inline `<script>` in the setup-notice dismiss handler with `wp_enqueue_script()` (assets/js/almc-setup-notice.js).
 * Hardened webhook input handling: decoded JSON payload now goes through an explicit whitelist + per-field sanitization before being passed to any `do_action` callback.
-* Internationalisation: updated text-domain to the new slug across all PHP files.
+* Bumped "Tested up to" to WordPress 7.0.
 
 = 1.0.0 =
 * Initial version.

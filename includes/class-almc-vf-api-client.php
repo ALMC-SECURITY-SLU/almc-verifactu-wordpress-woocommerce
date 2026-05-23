@@ -83,7 +83,7 @@ class ALMC_VF_Api_Client {
         if ( ! $this->is_configured() ) {
             return new WP_Error(
                 'almc_vf_not_configured',
-                __( 'El cliente API de VeriFactu no esta configurado. Introduce la URL y clave API.', 'almc-electronic-invoicing-verifactu' )
+                __( 'El cliente API de VeriFactu no esta configurado. Introduce la URL y clave API.', 'almc-verifactu' )
             );
         }
 
@@ -120,7 +120,7 @@ class ALMC_VF_Api_Client {
             $error_message = isset( $decoded['message'] )
                 ? $decoded['message']
                 /* translators: %d: HTTP status code returned by the VeriFactu API */
-                : sprintf( __( 'Error de la API (%d)', 'almc-electronic-invoicing-verifactu' ), $code );
+                : sprintf( __( 'Error de la API (%d)', 'almc-verifactu' ), $code );
 
             $error_detail = isset( $decoded['detail'] ) ? $decoded['detail'] : '';
 
@@ -138,7 +138,7 @@ class ALMC_VF_Api_Client {
         if ( null === $decoded ) {
             return new WP_Error(
                 'almc_vf_invalid_response',
-                __( 'Respuesta no valida del servidor.', 'almc-electronic-invoicing-verifactu' )
+                __( 'Respuesta no valida del servidor.', 'almc-verifactu' )
             );
         }
 
@@ -176,7 +176,7 @@ class ALMC_VF_Api_Client {
                 'almc_vf_health_failed',
                 sprintf(
                     /* translators: %d: HTTP status code returned by the VeriFactu API health endpoint */
-                    __( 'El servidor respondio con codigo %d', 'almc-electronic-invoicing-verifactu' ),
+                    __( 'El servidor respondio con codigo %d', 'almc-verifactu' ),
                     $code
                 )
             );
@@ -188,7 +188,7 @@ class ALMC_VF_Api_Client {
             if ( is_wp_error( $auth_test ) ) {
                 return new WP_Error(
                     'almc_vf_auth_failed',
-                    __( 'Servidor accesible pero la clave API no es valida.', 'almc-electronic-invoicing-verifactu' ),
+                    __( 'Servidor accesible pero la clave API no es valida.', 'almc-verifactu' ),
                     array( 'health' => $body )
                 );
             }
@@ -197,7 +197,7 @@ class ALMC_VF_Api_Client {
         return array(
             'success' => true,
             'health'  => $body,
-            'message' => __( 'Conexion exitosa.', 'almc-electronic-invoicing-verifactu' ),
+            'message' => __( 'Conexion exitosa.', 'almc-verifactu' ),
         );
     }
 
